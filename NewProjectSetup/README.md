@@ -42,7 +42,7 @@ npm i react-native-svg react-native-svg-transformer
 
 ## Must Medetory Dep : 
 ```
-npm i react-native-ui-lib reactotron-react-native
+npm i react-native-ui-lib reactotron-react-native twrnc react-native-fast-image react-native-image-picker
 ```
 ## Date Picker : 
 ```
