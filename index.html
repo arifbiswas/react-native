@@ -4,54 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>React Native Library</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      margin: 20px;
-    }
-    h1, h2 {
-      color: #2a6496;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    a {
-      color: #1a73e8;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      margin: 10px 0;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Welcome to React Native Library</h1>
+<body class="bg-gray-100 font-sans">
 
-  <p>This repository contains useful components and code snippets for React Native development.</p>
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center px-4">
+      <h1 class="text-xl font-bold">React Native Library</h1>
+      <nav>
+        <ul class="flex space-x-4">
+          <li><a href="#" class="hover:underline">Home</a></li>
+          <li><a href="#project-structure" class="hover:underline">Components</a></li>
+          <li><a href="#problem-discussion" class="hover:underline">Problem Discussion</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <h2>Project Structure</h2>
-  <ul>
-    <li><a href="https://github.com/arifbiswas/react-native/tree/main/NewProjectSetup">NewProjectSetup</a>: Initial setup files for starting new projects.</li>
-    <li><a href="./set_deeplinking/">set_deeplinking</a>: Implementation of deep linking functionality.</li>
-    <li><a href="./vision%20pay%20implementation/">vision pay implementation</a>: Payment integration for vision systems.</li>
-    <li><a href="./AddGiftChart.jsx">AddGiftChart.jsx</a>: Component for managing gift charts.</li>
-    <li><a href="./DataLoadMoreHelper.jsx">DataLoadMoreHelper.jsx</a>: Helper utility for data pagination.</li>
-    <li><a href="./NativeFirebase.jsx">NativeFirebase.jsx</a>: Firebase integration with native modules.</li>
-    <li><a href="./PdfGenerator.jsx">PdfGenerator.jsx</a>: Component for generating PDFs.</li>
-    <li><a href="./Voice_To_Text.jsx">Voice_To_Text.jsx</a>: Component for voice-to-text functionality.</li>
-  </ul>
+  <!-- Main Content -->
+  <main class="container mx-auto mt-6 px-4">
+    <section>
+      <h1 class="text-2xl font-bold text-blue-600">Welcome to React Native Library</h1>
+      <p class="mt-4 text-gray-700">
+        This repository contains useful components and code snippets for React Native development.
+      </p>
+    </section>
 
-  <h2>React Native Images</h2>
-  <p>Below are some images related to React Native development:</p>
-  <img src="https://reactnative.dev/img/header_logo.svg" alt="React Native Logo" />
-  <img src="https://reactnative.dev/img/homepage/code-example.png" alt="React Native Code Example" />
+    <section id="project-structure" class="mt-8">
+      <h2 class="text-xl font-semibold text-blue-600">Project Structure</h2>
+      <ul class="mt-4 list-disc pl-5 text-gray-700">
+        <li><a href="https://github.com/arifbiswas/react-native/tree/main/NewProjectSetup" class="text-blue-500 hover:underline">NewProjectSetup</a>: Initial setup files for starting new projects.</li>
+        <li><a href="./set_deeplinking/" class="text-blue-500 hover:underline">set_deeplinking</a>: Implementation of deep linking functionality.</li>
+        <li><a href="./vision%20pay%20implementation/" class="text-blue-500 hover:underline">vision pay implementation</a>: Payment integration for vision systems.</li>
+        <li><a href="./AddGiftChart.jsx" class="text-blue-500 hover:underline">AddGiftChart.jsx</a>: Component for managing gift charts.</li>
+        <li><a href="./DataLoadMoreHelper.jsx" class="text-blue-500 hover:underline">DataLoadMoreHelper.jsx</a>: Helper utility for data pagination.</li>
+        <li><a href="./NativeFirebase.jsx" class="text-blue-500 hover:underline">NativeFirebase.jsx</a>: Firebase integration with native modules.</li>
+        <li><a href="./PdfGenerator.jsx" class="text-blue-500 hover:underline">PdfGenerator.jsx</a>: Component for generating PDFs.</li>
+        <li><a href="./Voice_To_Text.jsx" class="text-blue-500 hover:underline">Voice_To_Text.jsx</a>: Component for voice-to-text functionality.</li>
+      </ul>
+    </section>
 
-  <p>Feel free to explore and utilize these components in your React Native projects.</p>
+    <section id="react-native-images" class="mt-8">
+      <h2 class="text-xl font-semibold text-blue-600">React Native Images</h2>
+      <p class="mt-4 text-gray-700">
+        Below are some images related to React Native development:
+      </p>
+      <img src="https://reactnative.dev/img/header_logo.svg" alt="React Native Logo" class="mt-4 rounded shadow-md" />
+      <img src="https://reactnative.dev/img/homepage/code-example.png" alt="React Native Code Example" class="mt-4 rounded shadow-md" />
+    </section>
+
+    <section id="problem-discussion" class="mt-8">
+      <h2 class="text-xl font-semibold text-blue-600">Problem Discussion</h2>
+      <p class="mt-4 text-gray-700">
+        If you encounter any issues, feel free to contribute or discuss them in the repository's issue section.
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-600 text-white py-4 mt-12">
+    <div class="container mx-auto text-center">
+      <p class="text-sm">© 2025 React Native Code Master All Rights Reserved.</p>
+    </div>
+  </footer>
+
 </body>
 </html>
