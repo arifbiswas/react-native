@@ -3,28 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Folder Structure Viewer</title>
+  <title>Repository Folder Structure</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .file-icon { display: inline-flex; align-items: center; gap: 8px; }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-gray-900 text-gray-100 font-sans">
 
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-6 text-center">Repository Folder Structure</h1>
-    <ul id="file-list" class="bg-white shadow-md rounded p-4">Loading...</ul>
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Repository Folder Structure</h1>
+    <ul id="file-list" class="bg-gray-800 shadow-lg rounded p-4 text-gray-300">Loading...</ul>
   </div>
 
   <script>
     async function fetchRepoContents() {
-      const owner = 'arifbiswas'; // Replace with your GitHub username
-      const repo = 'react-native'; // Replace with your repository name
-      const branch = 'main'; // Replace with your default branch name
+      const owner = 'arifbiswas';
+      const repo = 'react-native';
+      const branch = 'main';
 
       const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/`;
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
-        document.getElementById('file-list').innerHTML = 
-          '<li class="text-red-500">Failed to load contents.</li>';
+        document.getElementById('file-list').innerHTML = '<li class="text-red-400">Failed to load contents.</li>';
         return;
       }
 
@@ -32,21 +35,30 @@
       renderFileList(contents);
     }
 
+    function getFileIcon(fileName, fileType) {
+      if (fileType === 'dir') return '<i class="file-icon" style="color: orange;">📁</i>';
+      if (fileName.endsWith('.js')) return '<i class="file-icon" style="color: yellow;">🟨 JS</i>';
+      if (fileName.endsWith('.jsx')) return '<i class="file-icon" style="color: lightgreen;">🟩 JSX</i>';
+      if (fileName.endsWith('.html')) return '<i class="file-icon" style="color: orangered;">🟥 HTML</i>';
+      if (fileName.endsWith('.css')) return '<i class="file-icon" style="color: blue;">🟦 CSS</i>';
+      if (fileName.endsWith('.md')) return '<i class="file-icon" style="color: white;">📄</i>';
+      return '<i class="file-icon">📄</i>';
+    }
+
     function renderFileList(contents) {
       const list = document.getElementById('file-list');
-      list.innerHTML = ''; // Clear the "Loading..." text
+      list.innerHTML = '';
 
       contents.forEach(item => {
+        if (item.name.startsWith('.')) return;
         const listItem = document.createElement('li');
         listItem.className = 'mb-2';
 
         const link = document.createElement('a');
         link.href = item.download_url || '#';
         link.target = '_blank';
-        link.className = 
-          'block p-3 rounded hover:bg-blue-100 text-blue-600 font-medium';
-
-        link.innerText = item.type === 'dir' ? `📁 ${item.name}` : `📄 ${item.name}`;
+        link.className = 'block p-3 rounded hover:bg-blue-600 bg-gray-700 text-white font-medium flex items-center';
+        link.innerHTML = `${getFileIcon(item.name, item.type)} ${item.name}`;
 
         if (item.type === 'dir') {
           link.href = '#';
