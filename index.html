@@ -3,28 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Repository Folder Structure</title>
+  <title>Modern Repository Explorer</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
   <style>
-    .file-icon { display: inline-flex; align-items: center; gap: 8px; }
-    .toolbar { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
-    .toolbar button { background: #0078d4; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
-    .container { display: flex; gap: 10px; }
-    .explorer, .viewer { flex: 1; background: #1e1e1e; padding: 10px; border-radius: 6px; overflow: auto; resize: horizontal; min-width: 200px; }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #2d3748;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #4a5568;
+      border-radius: 3px;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
-
-  <div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Repository Folder Structure</h1>
-    <div class="toolbar">
-      <button onclick="goBack()">⬅ Back</button>
-      <button onclick="goForward()">➡ Forward</button>
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-800 flex flex-col">
+      <!-- Repository Info -->
+      <div class="p-4 bg-gray-700">
+        <h1 class="text-xl font-bold text-blue-400">Repository Explorer</h1>
+        <p class="text-sm text-gray-400">arifbiswas/react-native</p>
+      </div>
+      <!-- Navigation -->
+      <nav class="p-4 border-b border-gray-700">
+        <button id="backBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-l-md hover:bg-gray-600 focus:outline-none">
+          <i class="ri-arrow-left-line"></i>
+        </button>
+        <button id="forwardBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-r-md hover:bg-gray-600 focus:outline-none">
+          <i class="ri-arrow-right-line"></i>
+        </button>
+      </nav>
+      <!-- File List -->
+      <div class="flex-grow overflow-y-auto custom-scrollbar">
+        <ul id="file-list" class="p-2 text-gray-300">Loading...</ul>
+      </div>
     </div>
-    <div class="container">
-      <ul id="file-list" class="explorer shadow-lg rounded p-4 text-gray-300">Loading...</ul>
-      <iframe id="file-viewer" class="viewer hidden"></iframe>
+
+    <!-- Main Content -->
+    <div class="flex-grow flex flex-col">
+      <!-- Breadcrumb -->
+      <div id="breadcrumb" class="p-4 bg-gray-800 text-sm text-gray-400"></div>
+      <!-- File Viewer -->
+      <div class="flex-grow bg-gray-900 p-4">
+        <iframe id="file-viewer" class="w-full h-full bg-white rounded-lg shadow-lg"></iframe>
+      </div>
     </div>
   </div>
 
@@ -46,16 +72,17 @@
       const contents = await response.json();
       renderFileList(contents, path);
       updateHistory(path);
+      updateBreadcrumb(path);
     }
 
     function getFileIcon(fileName, fileType) {
-      if (fileType === 'dir') return '<i class="file-icon" style="color: orange;"> 📁 </i>';
-      if (fileName.endsWith('.js')) return '<i class="file-icon" style="color: yellow;"> 🟨 JS </i>';
-      if (fileName.endsWith('.jsx')) return '<i class="file-icon" style="color: lightgreen;"> 🟩 JSX </i>';
-      if (fileName.endsWith('.html')) return '<i class="file-icon" style="color: orangered;"> 🟥 HTML </i>';
-      if (fileName.endsWith('.css')) return '<i class="file-icon" style="color: blue;"> 🟦 CSS </i>';
-      if (fileName.endsWith('.md')) return '<i class="file-icon" style="color: white;"> 📄 </i>';
-      return '<i class="file-icon"> 📄</i>';
+      if (fileType === 'dir') return '<i class="ri-folder-line text-yellow-500"></i>';
+      if (fileName.endsWith('.js')) return '<i class="ri-javascript-line text-yellow-400"></i>';
+      if (fileName.endsWith('.jsx')) return '<i class="ri-reactjs-line text-blue-400"></i>';
+      if (fileName.endsWith('.html')) return '<i class="ri-html5-line text-red-500"></i>';
+      if (fileName.endsWith('.css')) return '<i class="ri-css3-line text-blue-500"></i>';
+      if (fileName.endsWith('.md')) return '<i class="ri-markdown-line text-white"></i>';
+      return '<i class="ri-file-line text-gray-400"></i>';
     }
 
     function renderFileList(contents, path) {
@@ -65,12 +92,12 @@
       contents.forEach(item => {
         if (item.name.startsWith('.')) return;
         const listItem = document.createElement('li');
-        listItem.className = 'mb-2';
+        listItem.className = 'mb-1';
 
         const link = document.createElement('a');
         link.href = '#';
-        link.className = 'block p-3 rounded hover:bg-blue-600 bg-gray-700 text-white font-medium flex items-center';
-        link.innerHTML = `${getFileIcon(item.name, item.type)} ${item.name}`;
+        link.className = 'flex items-center p-2 rounded hover:bg-gray-700 transition-colors duration-150';
+        link.innerHTML = `${getFileIcon(item.name, item.type)} <span class="ml-2">${item.name}</span>`;
 
         if (item.type === 'dir') {
           link.onclick = (event) => {
@@ -95,6 +122,26 @@
         historyStack.push(path);
         currentIndex++;
       }
+      updateNavigationButtons();
+    }
+
+    function updateNavigationButtons() {
+      document.getElementById('backBtn').disabled = currentIndex <= 0;
+      document.getElementById('forwardBtn').disabled = currentIndex >= historyStack.length - 1;
+    }
+
+    function updateBreadcrumb(path) {
+      const breadcrumb = document.getElementById('breadcrumb');
+      const parts = path.split('/');
+      let currentPath = '';
+      breadcrumb.innerHTML = '<a href="#" class="hover:text-blue-400" onclick="fetchRepoContents(\'\')">root</a>';
+      
+      parts.forEach((part, index) => {
+        if (part) {
+          currentPath += part + '/';
+          breadcrumb.innerHTML += ` / <a href="#" class="hover:text-blue-400" onclick="fetchRepoContents('${currentPath}')">${part}</a>`;
+        }
+      });
     }
 
     function goBack() {
@@ -113,12 +160,13 @@
 
     function openFileViewer(url) {
       const viewer = document.getElementById('file-viewer');
-      viewer.classList.remove('hidden');
       viewer.src = url;
     }
 
+    document.getElementById('backBtn').addEventListener('click', goBack);
+    document.getElementById('forwardBtn').addEventListener('click', goForward);
+
     fetchRepoContents();
   </script>
-
 </body>
 </html>
