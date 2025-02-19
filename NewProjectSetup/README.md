@@ -6,7 +6,7 @@
  npm install @react-navigation/native react-native-screens react-native-safe-area-context  @react-navigation/native-stack  
 ```
 
-## Buttom With Navitaion : 
+## Bottom With Navitaion : 
 ```
  npm install @react-navigation/native react-native-screens react-native-safe-area-context  @react-navigation/native-stack  @react-navigation/bottom-tabs
 ```
