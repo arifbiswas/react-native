@@ -12,9 +12,9 @@
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
 
-  <div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Repository Folder Structure</h1>
-    <ul id="file-list" class="bg-gray-800 shadow-lg rounded p-4 text-gray-300">Loading...</ul>
+  <div class="container mx-auto p-6 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">📂 Repository Folder Structure</h1>
+    <ul id="file-list" class="bg-gray-800 shadow-lg rounded-lg p-4 text-gray-300 space-y-2">Loading...</ul>
   </div>
 
   <script>
@@ -36,13 +36,13 @@
     }
 
     function getFileIcon(fileName, fileType) {
-      if (fileType === 'dir') return '<i class="file-icon" style="color: orange;"> 📁 </i>';
-      if (fileName.endsWith('.js')) return '<i class="file-icon" style="color: yellow;"> 🟨 JS </i>';
-      if (fileName.endsWith('.jsx')) return '<i class="file-icon" style="color: lightgreen;"> 🟩 JSX </i>';
-      if (fileName.endsWith('.html')) return '<i class="file-icon" style="color: orangered;"> 🟥 HTML </i>';
-      if (fileName.endsWith('.css')) return '<i class="file-icon" style="color: blue;"> 🟦 CSS </i>';
-      if (fileName.endsWith('.md')) return '<i class="file-icon" style="color: white;"> 📄 </i>';
-      return '<i class="file-icon"> 📄 </i>';
+      if (fileType === 'dir') return '<span class="text-orange-400">📁</span>';
+      if (fileName.endsWith('.js')) return '<span class="text-yellow-400">🟨 JS</span>';
+      if (fileName.endsWith('.jsx')) return '<span class="text-green-400">🟩 JSX</span>';
+      if (fileName.endsWith('.html')) return '<span class="text-red-400">🟥 HTML</span>';
+      if (fileName.endsWith('.css')) return '<span class="text-blue-400">🟦 CSS</span>';
+      if (fileName.endsWith('.md')) return '<span class="text-white">📄</span>';
+      return '<span class="text-gray-400">📄</span>';
     }
 
     function renderFileList(contents) {
@@ -52,11 +52,11 @@
       contents.forEach(item => {
         if (item.name.startsWith('.')) return;
         const listItem = document.createElement('li');
-        listItem.className = 'mb-2';
+        listItem.className = 'p-3 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center gap-4';
 
         const link = document.createElement('a');
         link.href = '#';
-        link.className = 'block p-3 rounded hover:bg-blue-600 bg-gray-700 text-white font-medium flex items-center';
+        link.className = 'flex items-center gap-2 text-white font-medium';
         link.innerHTML = `${getFileIcon(item.name, item.type)} ${item.name}`;
         link.onclick = (event) => {
           event.preventDefault();
@@ -79,7 +79,7 @@
         <body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-6">
           <h1 class="text-2xl font-bold text-blue-400 mb-4">Previewing: ${name}</h1>
           <iframe src="${url}" class="w-full h-[80vh] bg-gray-800 rounded-lg"></iframe>
-          <button onclick="window.close()" class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded">Close Preview</button>
+          <button onclick="window.close()" class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">Close Preview</button>
         </body>
         </html>
       `);
