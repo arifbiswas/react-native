@@ -11,7 +11,7 @@
  npm install @react-navigation/native react-native-screens react-native-safe-area-context  @react-navigation/native-stack  @react-navigation/bottom-tabs
 ```
 
- ## Buttom , Drawer And Navitaion :  
+ ## Bottom , Drawer And Navitaion :  
 ```
 npm install @react-navigation/native react-native-screens react-native-safe-area-context  @react-navigation/native-stack  @react-navigation/bottom-tabs 
 @react-navigation/drawer react-native-gesture-handler react-native-reanimated
