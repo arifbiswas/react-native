@@ -8,22 +8,29 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     .file-icon { display: inline-flex; align-items: center; gap: 8px; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+    .toolbar button { background: #0078d4; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
   </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
 
   <div class="container mx-auto p-6">
     <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Repository Folder Structure</h1>
+    <div class="toolbar">
+      <button onclick="goBack()">⬅ Back</button>
+      <button onclick="goForward()">➡ Forward</button>
+    </div>
     <ul id="file-list" class="bg-gray-800 shadow-lg rounded p-4 text-gray-300">Loading...</ul>
   </div>
 
   <script>
-    async function fetchRepoContents() {
+    let historyStack = [];
+    let currentIndex = -1;
+
+    async function fetchRepoContents(path = '') {
       const owner = 'arifbiswas';
       const repo = 'react-native';
-      const branch = 'main';
-
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/`;
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
@@ -32,7 +39,8 @@
       }
 
       const contents = await response.json();
-      renderFileList(contents);
+      renderFileList(contents, path);
+      updateHistory(path);
     }
 
     function getFileIcon(fileName, fileType) {
@@ -45,7 +53,7 @@
       return '<i class="file-icon"> 📄</i>';
     }
 
-    function renderFileList(contents) {
+    function renderFileList(contents, path) {
       const list = document.getElementById('file-list');
       list.innerHTML = '';
 
@@ -59,9 +67,38 @@
         link.className = 'block p-3 rounded hover:bg-blue-600 bg-gray-700 text-white font-medium flex items-center';
         link.innerHTML = `${getFileIcon(item.name, item.type)} ${item.name}`;
 
+        if (item.type === 'dir') {
+          link.onclick = (event) => {
+            event.preventDefault();
+            fetchRepoContents(item.path);
+          };
+        }
+
         listItem.appendChild(link);
         list.appendChild(listItem);
       });
+    }
+
+    function updateHistory(path) {
+      if (historyStack[currentIndex] !== path) {
+        historyStack = historyStack.slice(0, currentIndex + 1);
+        historyStack.push(path);
+        currentIndex++;
+      }
+    }
+
+    function goBack() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        fetchRepoContents(historyStack[currentIndex]);
+      }
+    }
+
+    function goForward() {
+      if (currentIndex < historyStack.length - 1) {
+        currentIndex++;
+        fetchRepoContents(historyStack[currentIndex]);
+      }
     }
 
     fetchRepoContents();
