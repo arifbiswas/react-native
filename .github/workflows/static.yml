@@ -18,8 +18,14 @@ jobs:
         with:
           node-version: 16  # Use the required Node.js version
 
-      - name: Build and deploy
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build  # Make sure this matches your build command
+
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # Deploy to the 'gh-pages' branch
-          folder: .         # Deploy the root directory
+          branch: gh-pages
+          folder: build  # Replace 'build' with the output folder of your project
