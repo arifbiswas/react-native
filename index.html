@@ -152,6 +152,9 @@
         <button id="forwardBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-r-md hover:bg-gray-600 focus:outline-none">
           <i class="ri-arrow-right-line"></i>
         </button>
+        <button id="authBtn" class="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none ml-2">
+          Auth
+        </button>
       </nav>
       <!-- File List -->
       <div class="flex-grow overflow-y-auto custom-scrollbar">
@@ -168,7 +171,7 @@
       </div>
       <!-- File Viewer -->
       <div class="flex-grow bg-[#1e1e1e] overflow-auto custom-scrollbar">
-        <pre id="file-content" class="p-4 font-mono text-sm line-numbers"><code></code></pre>
+        <pre id="file-content" class="p-4 font-mono text-sm"><code></code></pre>
       </div>
     </div>
   </div>
@@ -282,7 +285,7 @@
 
         if (isAuthenticated && hasPushAccess) {
           const removeButton = document.createElement('button');
-          removeButton.className = 'text-red-500 hover:text-red-700';
+          removeButton.className = 'text-red-500 hover:text-red-700 p-2';
           removeButton.innerHTML = '<i class="ri-delete-bin-line"></i>';
           removeButton.onclick = () => removeItem(item.path, item.type);
           listItem.appendChild(removeButton);
@@ -359,8 +362,6 @@
       parts.forEach((part, index) => {
         if (part) {
           currentPath += part + '/';
-          breadcrumb.innerHTML += ` / <a href="#" class="hover:text-
-          currentPath += part + '/';
           breadcrumb.innerHTML += ` / <a href="#" class="hover:text-blue-400" onclick="fetchRepoContents('${currentPath}')">${part}</a>`;
         }
       });
@@ -385,10 +386,13 @@
 
     // Simulating authentication and push access
     function simulateAuth() {
-      isAuthenticated = true;
-      hasPushAccess = true;
+      isAuthenticated = !isAuthenticated;
+      hasPushAccess = isAuthenticated;
+      document.getElementById('authBtn').textContent = isAuthenticated ? 'Logout' : 'Auth';
       fetchRepoContents(currentPath);
     }
+
+    document.getElementById('authBtn').addEventListener('click', simulateAuth);
 
     fetchRepoContents();
 
