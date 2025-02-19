@@ -10,6 +10,8 @@
     .file-icon { display: inline-flex; align-items: center; gap: 8px; }
     .toolbar { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
     .toolbar button { background: #0078d4; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
+    .container { display: flex; gap: 10px; }
+    .explorer, .viewer { flex: 1; background: #1e1e1e; padding: 10px; border-radius: 6px; overflow: auto; resize: horizontal; min-width: 200px; }
   </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
@@ -20,7 +22,10 @@
       <button onclick="goBack()">⬅ Back</button>
       <button onclick="goForward()">➡ Forward</button>
     </div>
-    <ul id="file-list" class="bg-gray-800 shadow-lg rounded p-4 text-gray-300">Loading...</ul>
+    <div class="container">
+      <ul id="file-list" class="explorer shadow-lg rounded p-4 text-gray-300">Loading...</ul>
+      <iframe id="file-viewer" class="viewer hidden"></iframe>
+    </div>
   </div>
 
   <script>
@@ -72,6 +77,11 @@
             event.preventDefault();
             fetchRepoContents(item.path);
           };
+        } else {
+          link.onclick = (event) => {
+            event.preventDefault();
+            openFileViewer(item.download_url);
+          };
         }
 
         listItem.appendChild(link);
@@ -99,6 +109,12 @@
         currentIndex++;
         fetchRepoContents(historyStack[currentIndex]);
       }
+    }
+
+    function openFileViewer(url) {
+      const viewer = document.getElementById('file-viewer');
+      viewer.classList.remove('hidden');
+      viewer.src = url;
     }
 
     fetchRepoContents();
