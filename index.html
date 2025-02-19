@@ -3,59 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto Directory Listing</title>
+  <title>Folder Structure Viewer</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
-  <header class="p-5 bg-blue-600 text-white text-center">
-    <h1 class="text-2xl">Directory Listing</h1>
-    <p class="mt-2">Auto-updated list of all files and folders in this repository</p>
-  </header>
 
-  <main class="container mx-auto mt-6">
-    <ul id="file-list" class="bg-white shadow-md rounded-lg p-6">
-      <li class="text-blue-600">Loading...</li>
-    </ul>
-  </main>
-
-  <footer class="mt-10 p-5 text-center bg-blue-600 text-white">
-    <p>&copy; 2025 Your Repository - Powered by GitHub Pages</p>
-  </footer>
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-6 text-center">Repository Folder Structure</h1>
+    <ul id="file-list" class="bg-white shadow-md rounded p-4">Loading...</ul>
+  </div>
 
   <script>
-    // Replace these with your repository details
-    const owner = "arifbiswas";
-    const repo = "react-native";
+    async function fetchRepoContents() {
+      const owner = 'arifbiswas'; // Replace with your GitHub username
+      const repo = 'react-native'; // Replace with your repository name
+      const branch = 'main'; // Replace with your default branch name
 
-    async function fetchFiles() {
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents`;
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/`;
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
-        document.getElementById("file-list").innerHTML = "<li>Error loading files</li>";
+        document.getElementById('file-list').innerHTML = 
+          '<li class="text-red-500">Failed to load contents.</li>';
         return;
       }
 
-      const files = await response.json();
-      const fileList = document.getElementById("file-list");
+      const contents = await response.json();
+      renderFileList(contents);
+    }
 
-      fileList.innerHTML = ""; // Clear loading message
+    function renderFileList(contents) {
+      const list = document.getElementById('file-list');
+      list.innerHTML = ''; // Clear the "Loading..." text
 
-      files.forEach(file => {
-        const listItem = document.createElement("li");
-        listItem.className = "p-2 border-b last:border-none";
+      contents.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.className = 'mb-2';
 
-        if (file.type === "dir") {
-          listItem.innerHTML = `<a href="${file.html_url}" target="_blank" class="text-blue-600 hover:underline">${file.name}/</a>`;
-        } else {
-          listItem.innerHTML = `<a href="${file.download_url}" target="_blank" class="text-blue-600 hover:underline">${file.name}</a>`;
+        const link = document.createElement('a');
+        link.href = item.download_url || '#';
+        link.target = '_blank';
+        link.className = 
+          'block p-3 rounded hover:bg-blue-100 text-blue-600 font-medium';
+
+        link.innerText = item.type === 'dir' ? `📁 ${item.name}` : `📄 ${item.name}`;
+
+        if (item.type === 'dir') {
+          link.href = '#';
+          link.onclick = (event) => {
+            event.preventDefault();
+            fetchSubdirectory(item.path);
+          };
         }
 
-        fileList.appendChild(listItem);
+        listItem.appendChild(link);
+        list.appendChild(listItem);
       });
     }
 
-    fetchFiles();
+    async function fetchSubdirectory(path) {
+      const owner = 'arifbiswas';
+      const repo = 'react-native';
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+      const response = await fetch(apiUrl);
+
+      if (!response.ok) {
+        alert('Failed to load directory contents.');
+        return;
+      }
+
+      const contents = await response.json();
+      renderFileList(contents);
+    }
+
+    fetchRepoContents();
   </script>
+
 </body>
 </html>
