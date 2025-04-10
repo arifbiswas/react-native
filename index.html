@@ -132,12 +132,36 @@
     .markdown-content th {
       background: #2d3748;
     }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(30, 30, 30, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
   <div class="flex h-screen">
     <!-- Sidebar -->
-    <div class="w-64 bg-gray-800 flex flex-col">
+    <div class="w-64 bg-gray-800 flex flex-col relative">
       <!-- Repository Info -->
       <div class="p-4 bg-gray-700">
         <h1 class="text-xl font-bold text-blue-400">Repository Explorer</h1>
@@ -145,16 +169,22 @@
       </div>
       <!-- Navigation -->
       <nav class="p-4 border-b border-gray-700">
-        <button id="backBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-l-md hover:bg-gray-600 focus:outline-none">
+        <button id="backBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-l-md hover:bg-gray-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
           <i class="ri-arrow-left-line"></i>
         </button>
-        <button id="forwardBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-r-md hover:bg-gray-600 focus:outline-none">
+        <button id="forwardBtn" class="px-3 py-2 bg-gray-700 text-gray-300 rounded-r-md hover:bg-gray-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
           <i class="ri-arrow-right-line"></i>
         </button>
       </nav>
       <!-- File List -->
-      <div class="flex-grow overflow-y-auto custom-scrollbar">
-        <ul id="file-list" class="p-2 text-gray-300">Loading...</ul>
+      <div class="flex-grow overflow-y-auto custom-scrollbar relative">
+        <ul id="file-list" class="p-2 text-gray-300">Loading repository contents...</ul>
+        <div id="sidebar-loading" class="loading-overlay hidden">
+          <div class="flex items-center space-x-2">
+            <div class="loading-spinner"></div>
+            <span>Loading...</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -166,8 +196,14 @@
         <div id="file-info"></div>
       </div>
       <!-- File Viewer -->
-      <div class="flex-grow bg-[#1e1e1e] overflow-auto custom-scrollbar">
+      <div class="flex-grow bg-[#1e1e1e] overflow-auto custom-scrollbar relative">
         <pre id="file-content" class="p-4 font-mono text-sm"><code></code></pre>
+        <div id="content-loading" class="loading-overlay hidden">
+          <div class="flex items-center space-x-2">
+            <div class="loading-spinner"></div>
+            <span>Loading file content...</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -180,7 +216,16 @@
     let currentIndex = -1;
     let currentPath = '';
 
+    function showLoading(selector) {
+      document.getElementById(selector).classList.remove('hidden');
+    }
+
+    function hideLoading(selector) {
+      document.getElementById(selector).classList.add('hidden');
+    }
+
     async function fetchRepoContents(path = '') {
+      showLoading('sidebar-loading');
       try {
         const { data } = await octokit.rest.repos.getContent({
           owner,
@@ -194,10 +239,13 @@
       } catch (error) {
         document.getElementById('file-list').innerHTML = 
           `<li class="text-red-400 p-2">Failed to load contents: ${error.message}</li>`;
+      } finally {
+        hideLoading('sidebar-loading');
       }
     }
 
     async function fetchFileContent(path) {
+      showLoading('content-loading');
       try {
         const { data } = await octokit.rest.repos.getContent({
           owner,
@@ -207,6 +255,8 @@
         return atob(data.content);
       } catch (error) {
         throw new Error(`Failed to load file content: ${error.message}`);
+      } finally {
+        hideLoading('content-loading');
       }
     }
 
@@ -238,6 +288,11 @@
     function renderFileList(contents, path) {
       const list = document.getElementById('file-list');
       list.innerHTML = '';
+
+      if (contents.length === 0) {
+        list.innerHTML = '<li class="text-gray-500 p-2">This directory is empty</li>';
+        return;
+      }
 
       contents.forEach(item => {
         if (item.name.startsWith('.')) return;
