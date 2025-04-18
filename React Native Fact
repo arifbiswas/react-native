@@ -1,0 +1,3 @@
+For reganarate android or ios tamplate
+npx react-native eject
+npx react-native init --platforms
